@@ -22,7 +22,7 @@ export class User{
     @Column()
     role:UserRole;
 
-    @Column()
+    @Column({default:false})
     verified:boolean;
 
     // @OneToMany(type => BooksRented, bookRented => bookRented.user) 
