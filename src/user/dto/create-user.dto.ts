@@ -1,5 +1,5 @@
 import { UserRole } from "../user-role";
-import { IsEmail, IsEnum, IsNotEmpty, IsString, MaxLength, MinLength, Validate} from 'class-validator';
+import { IsBoolean, IsEmail, IsEnum, IsNotEmpty, IsString, MaxLength, MinLength, Validate} from 'class-validator';
 import { ApiProperty } from "@nestjs/swagger";
 
 export class CreateUserDto {
@@ -27,6 +27,11 @@ export class CreateUserDto {
     @MaxLength(20)
     readonly password:string;
 
-    // @IsEnum(UserRole)
-    // readonly role:UserRole;
+    @ApiProperty()
+    @IsBoolean()
+    readonly verified?:boolean;
+
+    @ApiProperty()
+    @IsEnum(UserRole)
+    readonly role?:UserRole;
   }

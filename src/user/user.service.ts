@@ -51,9 +51,10 @@ export class UserService {
         // console.log(result);
     }
 
-    async verifyUser(id:string): Promise<User> {
+    async verifyUser(id:string, updateUserDto:UpdateUserDto): Promise<User> {
+        const { verified } = updateUserDto;
         const user = await this.findOne(id);
-        user.verified=true;
+        user.verified = verified;
         return await this.userRepository.save(user);
     }
 

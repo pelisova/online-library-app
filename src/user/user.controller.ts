@@ -31,8 +31,8 @@ export class UserController {
     }
 
     @Patch('/verify/:id')
-    verifyUser(@Param('id') id:string): Promise<User> {
-        return this.userService.verifyUser(id);
+    verifyUser(@Param('id') id:string, @Body() updateUserDto: UpdateUserDto): Promise<User> {
+        return this.userService.verifyUser(id, updateUserDto);
     }
 
     @Patch('/userRole/:id')

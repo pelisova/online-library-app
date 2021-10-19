@@ -4,9 +4,4 @@ import { IsEnum } from "class-validator";
 import { UserRole } from "../user-role";
 import { CreateUserDto } from "./create-user.dto";
 
-export class UpdateUserDto extends PartialType(CreateUserDto) {
-    
-    @ApiProperty()
-    @IsEnum(UserRole)
-    readonly role: UserRole;
-}
+export class UpdateUserDto extends PartialType(CreateUserDto) {}
