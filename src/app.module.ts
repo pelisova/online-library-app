@@ -9,6 +9,8 @@ import { Book } from './book/book.entity';
 import { BooksRentedModule } from './books-rented/books-rented.module';
 import { BooksRented } from './books-rented/books-rented.entity';
 
+// importing modules which are used in app,
+// connection with database.
 @Module({
   imports: [UserModule, BookModule, BooksRentedModule, TypeOrmModule.forRoot({
     type: 'mysql',

@@ -8,25 +8,26 @@ import { UpdateBookDto } from './dto/update-book.dto';
 export class BookController {
     constructor(private readonly bookService: BookService){}
 
-    //funkcije kontrolera
-
+    
+    //andpoint for adding new book in database
     @Post('add')
     addBook(@Body() createBookDto: CreateBookDto): Promise<Book> {
         return this.bookService.addBook(createBookDto);
     }
 
+    //andpoint for fetching all booka from database
     @Get('getAll')
     getAllBooks(): Promise<Book[]> {
         return this.bookService.getAllBooks();
     }
 
+    //andpoint for fetching book by id from database
     @Get('/getOne/:id')
     getBookById(@Param('id') id:string):Promise<Book> {
         return this.bookService.getBookById(id);
     }
 
-    //delete operation is update operation
-    //update => set status to not available
+    //andpoint for setting book as not available
     @Patch('/update/:id')
     removeBook(@Param('id') id:string, @Body() updateBookDto: UpdateBookDto): Promise<Book> {
         return this.bookService.removeBook(id, updateBookDto);
