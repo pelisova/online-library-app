@@ -9,9 +9,14 @@ export class UserController {
     constructor(private readonly userService: UserService){}
 
     //endpoint for creating new user
-    @Post('create')
-    createUser(@Body() createUserDto: CreateUserDto): Promise<User> {
+    @Post('signup')
+    signUp(@Body() createUserDto: CreateUserDto): Promise<User> {
         return this.userService.createUser(createUserDto);   
+    }
+
+    @Post('signin')
+    signIn(@Body() updateUserDto: UpdateUserDto): Promise<string> {
+        return this.userService.signIn(updateUserDto)
     }
 
     //endpoint for fetching all users
@@ -33,21 +38,30 @@ export class UserController {
     }
 
     //endpoint for verifying user as a member of library
-    @Patch('/verify/:id')
+    @Patch('verify/:id')
     verifyUser(@Param('id') id:string, @Body() updateUserDto: UpdateUserDto): Promise<User> {
         return this.userService.verifyUser(id, updateUserDto);
     }
 
     //endpoint for verifying user as member of library
-    @Patch('/userRole/:id')
+    @Patch('userRole/:id')
     changeUserRole(@Param('id') id:string, @Body() updateUserDto: UpdateUserDto): Promise<User> {
         return this.userService.userRole(id, updateUserDto);
     }
 
     //endpoint for verifying book which is rented
-    @Patch('/verify-book')
+    @Patch('verify-book')
     verifyBookRental():string {
         return this.userService.verifyBook();
     }
 
+    @Get('history/:id')
+    getHistoryOfBooks(@Param('id') id:string):Promise<string[]> {
+        return this.userService.getHistory(id);
+    }
+
 }
+function signIn() {
+    throw new Error('Function not implemented.');
+}
+

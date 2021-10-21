@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { BooksRented } from "src/books-rented/books-rented.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { User } from "src/user/user.entity";
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { BookCategory, BookStatus } from "./enum";
 
 @Entity()
@@ -8,7 +8,7 @@ export class Book{
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({unique:true})
     title: string;
 
     @Column()
@@ -27,6 +27,7 @@ export class Book{
     @Column('text')
     status: BookStatus;
 
-    // @OneToMany(type => BooksRented, bookRented => bookRented.book)
-    // booksRented: BooksRented[];
+    @ManyToOne(type => User, user => user.books)
+    // @JoinColumn()
+    user: User;
 }

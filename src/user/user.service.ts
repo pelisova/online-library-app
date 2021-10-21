@@ -1,10 +1,11 @@
-import { HttpCode, Injectable, NotFoundException } from '@nestjs/common';
+import { HttpCode, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserRole } from './user-role';
 import { User } from './user.entity';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -15,20 +16,41 @@ export class UserService {
 
     async createUser(createUserDto: CreateUserDto): Promise<User> {
         const {firstName, lastName, email, password} = createUserDto;
+        //hash password
+        const salt = await bcrypt.genSalt();
+        const hashPassword = await bcrypt.hash(password, salt);
+
         const user = this.userRepository.create({
             firstName,
             lastName,
             email,
-            password,
-            role: UserRole.MEMBER,
-            verified:false
+            password: hashPassword
         })
-        await this.userRepository.save(user);
-        return user;
-    }     
+
+        try {
+            await this.userRepository.save(user);
+            return user;
+        }catch(e) {
+            console.log(e);
+            throw new InternalServerErrorException('Your email is already in use. Please try with another email!');
+        }
+        
+    }    
+    
+    async signIn(updateUserDto: UpdateUserDto): Promise<string> {
+        const {email, password} = updateUserDto;
+        const user = await this.userRepository.findOne({email});
+
+        if(user && (await bcrypt.compare(password, user.password))){
+            return 'success'
+        }else {
+            throw new UnauthorizedException('Please check your login credentials');
+        }
+        
+    }
 
     async getAll(): Promise<User[]> {
-        const users = await this.userRepository.find();
+        const users = await this.userRepository.find({relations: ['books']});
         if(users.length==0){
             throw new NotFoundException('Oops! Users are not found!')
         }
@@ -36,7 +58,7 @@ export class UserService {
     }
 
     async findOne(id:string): Promise<User> {
-        const user = await this.userRepository.findOne(id);
+        const user = await this.userRepository.findOne(id, {relations:['books']});
         if(!user){
             throw new NotFoundException(`User #${id} is not found!`);
         }
@@ -68,5 +90,15 @@ export class UserService {
     verifyBook():string {
         return 'accepted';
     }
+
+
+    async getHistory(id:string): Promise<string[]> {
+        const user = await this.findOne(id);
+        var books = [];
+        user.books.forEach(book => {
+            books.push(book.title)
+        });
+        return books;
+    }    
 
 }

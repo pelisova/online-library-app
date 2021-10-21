@@ -32,4 +32,9 @@ export class BookController {
     removeBook(@Param('id') id:string, @Body() updateBookDto: UpdateBookDto): Promise<Book> {
         return this.bookService.removeBook(id, updateBookDto);
     }
+
+    @Patch('/rent/user/:userId/book/:bookId')
+    rentBook(@Param('userId') userId:string, @Param('bookId') bookId:string): Promise<Book> {
+        return this.bookService.rentBook(userId, bookId);
+    }
 }

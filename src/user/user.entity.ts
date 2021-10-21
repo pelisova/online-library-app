@@ -1,5 +1,5 @@
-import { BooksRented } from "src/books-rented/books-rented.entity";
-import { Column, Entity, JoinTable, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Book } from "src/book/book.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { UserRole } from "./user-role";
 
 @Entity()
@@ -13,19 +13,19 @@ export class User{
     @Column()
     lastName:string;
     
-    @Column()
+    @Column({unique:true})
     email:string;
 
     @Column()
     password:string;
 
-    @Column('text')
+    @Column('text', {default:UserRole.MEMBER})
     role:UserRole;
 
     @Column({default:false})
     verified:boolean;
 
-    // @OneToMany(type => BooksRented, bookRented => bookRented.user) 
-    // booksRented: BooksRented[];
+    @OneToMany(type => Book, book => book.user, { cascade: true}) 
+    books: Book[];
     
 }

@@ -6,20 +6,18 @@ import { BookModule } from './book/book.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/user.entity';
 import { Book } from './book/book.entity';
-import { BooksRentedModule } from './books-rented/books-rented.module';
-import { BooksRented } from './books-rented/books-rented.entity';
 
 // importing modules which are used in app,
 // connection with database.
 @Module({
-  imports: [UserModule, BookModule, BooksRentedModule, TypeOrmModule.forRoot({
+  imports: [UserModule, BookModule, TypeOrmModule.forRoot({
     type: 'mysql',
       host: 'localhost',
       port: 3306,
       username: 'root',
       password: '',
       database: 'library',
-      entities: [User, Book, BooksRented],
+      entities: [User, Book],
       autoLoadEntities: true,
       synchronize: true,
   })],
