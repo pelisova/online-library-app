@@ -1,14 +1,15 @@
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { Book } from './book.entity';
 import { BookService } from './book.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { UpdateBookDto } from './dto/update-book.dto';
 
+@ApiTags('Book')
 @Controller('book')
 export class BookController {
     constructor(private readonly bookService: BookService){}
 
-    
     //andpoint for adding new book in database
     @Post('add')
     addBook(@Body() createBookDto: CreateBookDto): Promise<Book> {

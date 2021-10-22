@@ -1,17 +1,20 @@
-import { HttpCode, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserRole } from './user-role';
+// import { UserRole } from './user-role';
 import { User } from './user.entity';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from './jwt/jwt-payload.interface';
 
 @Injectable()
 export class UserService {
     constructor(
         @InjectRepository(User)
-        private userRepository: Repository<User>
+        private userRepository: Repository<User>,
+        private jwtService:JwtService
     ){}
 
     async createUser(createUserDto: CreateUserDto): Promise<User> {
@@ -37,12 +40,16 @@ export class UserService {
         
     }    
     
-    async signIn(updateUserDto: UpdateUserDto): Promise<string> {
+    async signIn(updateUserDto: UpdateUserDto): Promise<{accessToken: string}> {
         const {email, password} = updateUserDto;
         const user = await this.userRepository.findOne({email});
 
         if(user && (await bcrypt.compare(password, user.password))){
-            return 'success'
+            // can be a string also, but practice is to be object!
+            const payload: JwtPayload = { email }; 
+            const accessToken: string = await this.jwtService.sign(payload);
+            // accesToken will aslo be an object! It is jwt token for authentication!
+            return { accessToken };
         }else {
             throw new UnauthorizedException('Please check your login credentials');
         }
@@ -51,14 +58,22 @@ export class UserService {
 
     async getAll(): Promise<User[]> {
         const users = await this.userRepository.find({relations: ['books']});
-        if(users.length==0){
-            throw new NotFoundException('Oops! Users are not found!')
+        if(users.length==0) {
+            throw new NotFoundException('Oops! Users are not found!');
         }
-        return users;
+        return users; 
     }
 
     async findOne(id:string): Promise<User> {
-        const user = await this.userRepository.findOne(id, {relations:['books']});
+        let user;
+
+        try{
+            user = await this.userRepository.findOne(id, {relations:['books']});
+        }catch(e) {
+            console.log(e);
+            //throw new NotFoundException(`User #${id} is not found!`);
+        }
+
         if(!user){
             throw new NotFoundException(`User #${id} is not found!`);
         }
@@ -66,10 +81,16 @@ export class UserService {
     }
    
     async removeUser(id:string): Promise<void> {
-        const result = await this.userRepository.delete(id);
-        if(result.affected===0) {
+        try{
+            await this.userRepository.delete(id);
+        }catch(e) {
+            console.log(e)
             throw new NotFoundException(`User with #${id} can not be found!`);
         }
+        
+        // if(result.affected===0) {
+        //     throw new NotFoundException(`User with #${id} can not be found!`);
+        // }
         // console.log(result);
     }
 
@@ -77,14 +98,24 @@ export class UserService {
         const { verified } = updateUserDto;
         const user = await this.findOne(id);
         user.verified = verified;
-        return await this.userRepository.save(user);
+        try{
+            return await this.userRepository.save(user);
+        }catch(e){ 
+            console.log(e);
+        }
+        
     }
 
     async userRole(id:string, updateUserDto:UpdateUserDto): Promise<User> {
         const { role } = updateUserDto;
         const user = await this.findOne(id);
-        user.role = role
-        return await this.userRepository.save(user);
+        user.role = role;
+        try{
+            return await this.userRepository.save(user);
+        }catch(e) {
+            console.log(e);
+        }
+        
     }
 
     verifyBook():string {
