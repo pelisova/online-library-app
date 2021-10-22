@@ -34,6 +34,7 @@ export const GetMemberUser = createParamDecorator(
   }
 );
 
+// example from docs
 // export const GetUser = createParamDecorator(
   //   (data: {"id":"10"}, ctx: ExecutionContext): User => {
   //     const request = ctx.switchToHttp().getRequest();

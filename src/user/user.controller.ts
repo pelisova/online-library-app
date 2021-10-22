@@ -3,12 +3,12 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiTags } from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { GetLibrarianUser, GetMemberUser} from './user.decorator';
+import { GetAdminUser, GetLibrarianUser, GetMemberUser} from './user.decorator';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 
 
-// Only authenticated user can trigger API. Role authorization is implemented using CustomDecorator @GetUser.
+// Only authenticated user can trigger API. Role authorization is implemented using CustomDecorator (user.decorator.ts).
 @ApiTags('User')
 @Controller('user')
 export class UserController {
@@ -35,28 +35,28 @@ export class UserController {
     //endpoint for fetching user by id.
     @Get('getById/:id')
     @UseGuards(AuthGuard())
-    getUserById(@Param('id') id:string): Promise<User>{
+    getUserById(@Param('id') id:string, @GetLibrarianUser() user: User): Promise<User>{
         return this.userService.findOne(id);
     }
 
     //endpoint for deleting user
     @Delete('/:id')
     @UseGuards(AuthGuard())
-    removeUser(@Param('id') id:string): Promise<void>{
+    removeUser(@Param('id') id:string, @GetLibrarianUser() user: User): Promise<void>{
         return this.userService.removeUser(id);
     }
 
     //endpoint for verifying user as a member of library
     @Patch('verify/:id')
     @UseGuards(AuthGuard())
-    verifyUser(@Param('id') id:string, @Body() updateUserDto: UpdateUserDto): Promise<User> {
+    verifyUser(@Param('id') id:string, @Body() updateUserDto: UpdateUserDto, @GetLibrarianUser() user: User): Promise<User> {
         return this.userService.verifyUser(id, updateUserDto);
     }
 
     //endpoint for verifying user as member of library
     @Patch('userRole/:id')
     @UseGuards(AuthGuard())
-    changeUserRole(@Param('id') id:string, @Body() updateUserDto: UpdateUserDto): Promise<User> {
+    changeUserRole(@Param('id') id:string, @Body() updateUserDto: UpdateUserDto, @GetAdminUser() user: User): Promise<User> {
         return this.userService.userRole(id, updateUserDto);
     }
 
@@ -67,6 +67,7 @@ export class UserController {
         return this.userService.verifyBook();
     }
 
+    //endpoint for showing history of rented books of user
     @Get('history')
     @UseGuards(AuthGuard())
     getHistoryOfBooks(@GetMemberUser() user: User):Promise<string[]> {

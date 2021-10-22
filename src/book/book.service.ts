@@ -1,5 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
 import { Repository } from 'typeorm';
@@ -24,10 +23,9 @@ export class BookService {
             await this.bookRepository.save(book);
             return book;
         }catch(e) {
-            console.log(e);
-            throw new InternalServerErrorException('Title is already in use. Please try with another title!');
-        }
-        
+            // console.log(e);
+            throw new BadRequestException('Title is already in use. Please try with another title!');
+        }   
     }
 
     async getAllBooks(): Promise<Book[]> {

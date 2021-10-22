@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -34,8 +34,8 @@ export class UserService {
             await this.userRepository.save(user);
             return user;
         }catch(e) {
-            console.log(e);
-            throw new InternalServerErrorException('Your email is already in use. Please try with another email!');
+            // console.log(e);
+            throw new BadRequestException('Your email is already in use. Please try with another email!');
         }
         
     }    
@@ -58,22 +58,16 @@ export class UserService {
 
     async getAll(): Promise<User[]> {
         const users = await this.userRepository.find({relations: ['books']});
+        console.log(users.length);
         if(users.length==0) {
             throw new NotFoundException('Oops! Users are not found!');
         }
         return users; 
     }
 
+    // if it fails, findOne will return undifined
     async findOne(id:string): Promise<User> {
-        let user;
-
-        try{
-            user = await this.userRepository.findOne(id, {relations:['books']});
-        }catch(e) {
-            console.log(e);
-            //throw new NotFoundException(`User #${id} is not found!`);
-        }
-
+        const user = await this.userRepository.findOne(id, {relations:['books']});
         if(!user){
             throw new NotFoundException(`User #${id} is not found!`);
         }
@@ -81,41 +75,22 @@ export class UserService {
     }
    
     async removeUser(id:string): Promise<void> {
-        try{
-            await this.userRepository.delete(id);
-        }catch(e) {
-            console.log(e)
-            throw new NotFoundException(`User with #${id} can not be found!`);
-        }
-        
-        // if(result.affected===0) {
-        //     throw new NotFoundException(`User with #${id} can not be found!`);
-        // }
-        // console.log(result);
+        const user = await this.findOne(id);
+        await this.userRepository.delete(user.id);
     }
 
     async verifyUser(id:string, updateUserDto:UpdateUserDto): Promise<User> {
         const { verified } = updateUserDto;
         const user = await this.findOne(id);
         user.verified = verified;
-        try{
-            return await this.userRepository.save(user);
-        }catch(e){ 
-            console.log(e);
-        }
-        
+        return await this.userRepository.save(user); 
     }
 
     async userRole(id:string, updateUserDto:UpdateUserDto): Promise<User> {
         const { role } = updateUserDto;
         const user = await this.findOne(id);
         user.role = role;
-        try{
-            return await this.userRepository.save(user);
-        }catch(e) {
-            console.log(e);
-        }
-        
+        return await this.userRepository.save(user);    
     }
 
     verifyBook():string {
