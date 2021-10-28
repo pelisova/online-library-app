@@ -8,7 +8,8 @@ async function bootstrap() {
 
   //app instance
   const app = await NestFactory.create(AppModule);
-
+  app.enableCors() //for communication with frontend app
+  
   //global validation rules for dto
   app.useGlobalPipes(new ValidationPipe({
     whitelist:true,

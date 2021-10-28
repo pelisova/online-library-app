@@ -21,7 +21,7 @@ export class UserController {
     }
 
     @Post('signin')
-    signIn(@Body() updateUserDto: UpdateUserDto): Promise<{accessToken: string}> {
+    signIn(@Body() updateUserDto: UpdateUserDto) {
         return this.userService.signIn(updateUserDto)
     }
 

@@ -40,7 +40,7 @@ export class UserService {
         
     }    
     
-    async signIn(updateUserDto: UpdateUserDto): Promise<{accessToken: string}> {
+    async signIn(updateUserDto: UpdateUserDto) {
         const {email, password} = updateUserDto;
         const user = await this.userRepository.findOne({email});
 
@@ -49,7 +49,8 @@ export class UserService {
             const payload: JwtPayload = { email }; 
             const accessToken: string = await this.jwtService.sign(payload);
             // accesToken will aslo be an object! It is jwt token for authentication!
-            return { accessToken };
+            delete user.password;
+            return {user, accessToken};
         }else {
             throw new UnauthorizedException('Please check your login credentials');
         }
@@ -62,6 +63,9 @@ export class UserService {
         if(users.length==0) {
             throw new NotFoundException('Oops! Users are not found!');
         }
+        users.forEach(user => {
+            delete user.password;
+        });
         return users; 
     }
 
@@ -71,6 +75,7 @@ export class UserService {
         if(!user){
             throw new NotFoundException(`User #${id} is not found!`);
         }
+        delete user.password;
         return user;
     }
    

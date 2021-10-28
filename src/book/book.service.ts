@@ -33,6 +33,11 @@ export class BookService {
         if(books.length===0) {
             throw new NotFoundException('Sorry, books are not found!');
         }
+        books.forEach(book => {
+            if(book.user !== null){
+                delete book.user.password;
+            }
+        });
         return books;
     }
 
@@ -40,6 +45,9 @@ export class BookService {
         const book = await this.bookRepository.findOne(id, {relations: ['user']});
         if(!book){
             throw new NotFoundException(`Book #${id} is not found`);
+        }
+        if(book.user !== null){
+            delete book.user.password;
         }
         return book;
     }
@@ -58,6 +66,7 @@ export class BookService {
         if(!user){
             throw new NotFoundException(`User ${user.firstName} is not found`);
         }
+        delete user.password;
         book.user = user;
         book.status = BookStatus.NOT_AVAILABLE
         return await this.bookRepository.save(book);
