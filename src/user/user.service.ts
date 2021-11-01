@@ -119,11 +119,6 @@ export class UserService {
         return await this.userRepository.save(user);    
     }
 
-    verifyBook():string {
-        return 'accepted';
-    }
-
-
     async getHistory(id:string): Promise<string[]> {
         const user = await this.findOne(id);
         var books = [];

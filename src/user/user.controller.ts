@@ -74,13 +74,6 @@ export class UserController {
         return this.userService.userRole(id, updateUserDto);
     }
 
-    //endpoint for verifying book which is rented
-    @Patch('verify-book')
-    @UseGuards(AuthGuard())
-    verifyBookRental():string {
-        return this.userService.verifyBook();
-    }
-
     //endpoint for showing history of rented books of user
     @Get('history')
     @UseGuards(AuthGuard())
