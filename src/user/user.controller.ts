@@ -32,6 +32,13 @@ export class UserController {
         return this.userService.getAll();
     }
 
+    // /endpoint for fetching all unverified users
+    @Get('getUnverifiedUsers')
+    @UseGuards(AuthGuard())
+    getUnverifiedUsers(@GetLibrarianUser() user: User): Promise<User[]> {
+        return this.userService.getUnverifiedUsers();
+    }
+
     //endpoint for fetching user by id.
     @Get('getById/:id')
     @UseGuards(AuthGuard())

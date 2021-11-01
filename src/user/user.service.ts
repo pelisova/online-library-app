@@ -59,7 +59,17 @@ export class UserService {
 
     async getAll(): Promise<User[]> {
         const users = await this.userRepository.find({relations: ['books']});
-        console.log(users.length);
+        if(users.length==0) {
+            throw new NotFoundException('Oops! Users are not found!');
+        }
+        users.forEach(user => {
+            delete user.password;
+        });
+        return users; 
+    }
+
+    async getUnverifiedUsers(): Promise<User[]> {
+        const users = await this.userRepository.find({ where: { verified: false } });
         if(users.length==0) {
             throw new NotFoundException('Oops! Users are not found!');
         }
