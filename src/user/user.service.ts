@@ -78,16 +78,25 @@ export class UserService {
         delete user.password;
         return user;
     }
+
+     // if it fails, findOne will return undifined
+     async findOneEmail(email:string) {
+        const user = await this.userRepository.findOne({email}, {relations:['books']});
+        if(!user){
+            throw new NotFoundException(`User #${email} is not found!`);
+        }
+        delete user.password;
+        return { user };
+    }
    
     async removeUser(id:string): Promise<void> {
         const user = await this.findOne(id);
         await this.userRepository.delete(user.id);
     }
 
-    async verifyUser(id:string, updateUserDto:UpdateUserDto): Promise<User> {
-        const { verified } = updateUserDto;
+    async verifyUser(id:string): Promise<User> {
         const user = await this.findOne(id);
-        user.verified = verified;
+        user.verified == true;
         return await this.userRepository.save(user); 
     }
 
@@ -107,7 +116,7 @@ export class UserService {
         const user = await this.findOne(id);
         var books = [];
         user.books.forEach(book => {
-            books.push(book.title)
+            books.push(book)
         });
         return books;
     }    

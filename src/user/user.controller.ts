@@ -39,6 +39,13 @@ export class UserController {
         return this.userService.findOne(id);
     }
 
+    //endpoint for fetching user by id.
+    @Get('getByEmail/:email')
+    @UseGuards(AuthGuard())
+    getUserByEmail(@Param('email') email:string){
+        return this.userService.findOneEmail(email);
+    }
+
     //endpoint for deleting user
     @Delete('/:id')
     @UseGuards(AuthGuard())
@@ -49,8 +56,8 @@ export class UserController {
     //endpoint for verifying user as a member of library
     @Patch('verify/:id')
     @UseGuards(AuthGuard())
-    verifyUser(@Param('id') id:string, @Body() updateUserDto: UpdateUserDto, @GetLibrarianUser() user: User): Promise<User> {
-        return this.userService.verifyUser(id, updateUserDto);
+    verifyUser(@Param('id') id:string, @GetLibrarianUser() user: User): Promise<User> {
+        return this.userService.verifyUser(id);
     }
 
     //endpoint for verifying user as member of library

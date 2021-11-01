@@ -38,7 +38,9 @@ export class BookService {
                 delete book.user.password;
             }
         });
-        return books;
+
+        const available_books = books.filter(book => book.status==='A')
+        return available_books;
     }
 
     async getBookById(id:string): Promise<Book> {
@@ -68,7 +70,7 @@ export class BookService {
         }
         delete user.password;
         book.user = user;
-        book.status = BookStatus.NOT_AVAILABLE
+        book.status = BookStatus.NOT_AVAILABLE;
         return await this.bookRepository.save(book);
     }
 
