@@ -44,15 +44,17 @@ export class UserService {
         const {email, password} = updateUserDto;
         const user = await this.userRepository.findOne({email});
 
-        if(user && (await bcrypt.compare(password, user.password))){
+        if(user && user.verified && (await bcrypt.compare(password, user.password))){
             // can be a string also, but practice is to be object!
             const payload: JwtPayload = { email }; 
             const accessToken: string = await this.jwtService.sign(payload);
             // accesToken will aslo be an object! It is jwt token for authentication!
             delete user.password;
             return {user, accessToken};
-        }else {
-            throw new UnauthorizedException('Please check your login credentials');
+        } else if(!user.verified) {
+            throw new UnauthorizedException('Your account has not been verified yet.');
+        } else {
+            throw new UnauthorizedException('Please check your login credentials.');
         }
         
     }
@@ -106,7 +108,7 @@ export class UserService {
 
     async verifyUser(id:string): Promise<User> {
         const user = await this.findOne(id);
-        user.verified == true;
+        user.verified = true;
         return await this.userRepository.save(user); 
     }
 
