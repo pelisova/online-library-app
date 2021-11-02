@@ -30,6 +30,7 @@ The background part of the application consists of 3 layers: Controller, Service
 Swagger documentation is integrated.
 Authentication and authorization was implemented using PassportModule.
 We used the Vue.js framework for the frontend application.
+GitHub account for backend and frontend application: https://github.com/pelisova
 
 ## Installation
 
