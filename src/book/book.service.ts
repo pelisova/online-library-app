@@ -23,7 +23,6 @@ export class BookService {
             await this.bookRepository.save(book);
             return book;
         }catch(e) {
-            // console.log(e);
             throw new BadRequestException('Title is already in use. Please try with another title!');
         }   
     }

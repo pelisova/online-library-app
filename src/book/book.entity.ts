@@ -1,6 +1,5 @@
-import { ApiProperty } from "@nestjs/swagger";
 import { User } from "src/user/user.entity";
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { BookCategory, BookStatus } from "./enum";
 
 @Entity()
@@ -23,11 +22,9 @@ export class Book{
     @Column()
     printingHouse: string;
 
-    // A means available and NA means not available
     @Column('text')
     status: BookStatus;
 
     @ManyToOne(type => User, user => user.books)
-    // @JoinColumn()
     user: User;
 }

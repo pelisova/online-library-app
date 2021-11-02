@@ -1,9 +1,8 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-// import { UserRole } from './user-role';
 import { User } from './user.entity';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
@@ -34,7 +33,6 @@ export class UserService {
             await this.userRepository.save(user);
             return user;
         }catch(e) {
-            // console.log(e);
             throw new BadRequestException('Your email is already in use. Please try with another email!');
         }
         
@@ -45,10 +43,8 @@ export class UserService {
         const user = await this.userRepository.findOne({email});
 
         if(user && user.verified && (await bcrypt.compare(password, user.password))){
-            // can be a string also, but practice is to be object!
             const payload: JwtPayload = { email }; 
             const accessToken: string = await this.jwtService.sign(payload);
-            // accesToken will aslo be an object! It is jwt token for authentication!
             delete user.password;
             return {user, accessToken};
         } else if(!user.verified) {
@@ -81,7 +77,6 @@ export class UserService {
         return users; 
     }
 
-    // if it fails, findOne will return undifined
     async findOne(id:string): Promise<User> {
         const user = await this.userRepository.findOne(id, {relations:['books']});
         if(!user){
@@ -91,7 +86,6 @@ export class UserService {
         return user;
     }
 
-     // if it fails, findOne will return undifined
      async findOneEmail(email:string) {
         const user = await this.userRepository.findOne({email}, {relations:['books']});
         if(!user){

@@ -7,10 +7,14 @@ import { UserController } from './user.controller';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 
-// structure of UserModule
-// importing User entity into TypeOrm feature - create repository for User entity
-// defining strategy for authentication and secret Key for sign_In with session time
-// exports array is used to make authentication useful in app 
+
+/**
+ * structure of UserModule
+ * we import User entity into TypeOrm feature to create repository for User entity 
+ * defining strategy for authentication and secret Key for sign_In with session time 
+ * the exports array is used to make authentication useful throughout the application
+ */
+
 
 @Module({
   imports: [

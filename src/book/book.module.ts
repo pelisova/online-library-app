@@ -6,8 +6,11 @@ import { BookController } from './book.controller';
 import { Book } from './book.entity';
 import { BookService } from './book.service';
 
-// structure of BookModule
-// importing Book entity into TypeOrm feature - create repository for Book entity
+/**
+ * structure of BookModule
+ * importing Book entity into TypeOrm feature to create repository for Book entity
+ */
+
 @Module({
   imports: [TypeOrmModule.forFeature([Book, User]), UserModule],
   controllers: [BookController],

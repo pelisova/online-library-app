@@ -7,8 +7,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/user.entity';
 import { Book } from './book/book.entity';
 
-// importing modules which are used in app,
-// connection with database.
+/**
+ * Here is integration with MySql database, which is hosted locally
+ * And we import all module that we use in app: UserModule & BookModule
+ */
+
 @Module({
   imports: [UserModule, BookModule, TypeOrmModule.forRoot({
     type: 'mysql',

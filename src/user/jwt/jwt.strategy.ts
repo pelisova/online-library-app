@@ -6,11 +6,15 @@ import { Repository } from "typeorm";
 import { User } from "../user.entity";
 import { JwtPayload } from "./jwt-payload.interface";
 
-// PassportStrategy provide authentication rules on every API endpoint.
-// secret key here is used for endpoint.
-// jwtFromRequest is used for extracting token from request with specified method.
-// validate function will be triggered when token is valid and it will return user
-// it helps us to create custom decorator for role authorization.
+
+/**
+ * PassportStrategy provide authentication rules on every API endpoint.
+ * secret key here is used for endpoint.
+ * JwtFromRequest is used for extracting token from request with specified method.
+ * the validation function will start when the token is valid and will return the user.
+ * validation function helps us to create custom decorator for role authorization.
+ */
+
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

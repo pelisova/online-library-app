@@ -6,18 +6,22 @@ import { AppModule } from './app.module';
  
 async function bootstrap() {
 
-  //app instance
+  /**
+   * app is instance of aplication
+   * app.enableCors() is used for sharing resources
+   * useGlobalPipes are global validation rules for Dto
+   * swagger documentation is integrated and it runs on url: http://localhost:3000/api/
+   * app listen on port 3000
+   */
+
   const app = await NestFactory.create(AppModule);
-  app.enableCors() //for communication with frontend app
+  app.enableCors();
   
-  //global validation rules for dto
   app.useGlobalPipes(new ValidationPipe({
     whitelist:true,
     transform:true,
   }));
 
-  //swagger docs integration
-  //url: http://localhost:3000/api/
   const config = new DocumentBuilder()
     .setTitle('Swagger documentation')
     .setDescription('The library-app API description')
@@ -27,7 +31,6 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
   
-  //app listen on port 3000
   await app.listen(3000);
 }
 bootstrap();
