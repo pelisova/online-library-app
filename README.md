@@ -26,6 +26,11 @@
 
 [Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
 
+The background part of the application consists of 3 layers: Controller, Service and Repository. The database is MySql.
+Swagger documentation is integrated.
+Authentication and authorization was implemented using PassportModule.
+We used the Vue.js framework for the frontend application.
+
 ## Installation
 
 ```bash
